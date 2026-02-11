@@ -4,41 +4,130 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>❤️ Beppo und Weibi</title>
+
   <style>
-    :root { --max: 820px; --gap: 14px; }
+    :root { --max: 900px; --gap: 14px; }
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: #0b0b10;
       color: #fff;
+      background: url("img/bg.jpg") center center / cover no-repeat fixed;
+      position: relative;
     }
+
+    /* Abdunkelung + edler Verlauf über dem Hintergrundbild */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 20% 10%, rgba(255, 70, 120, 0.18), transparent 45%),
+                  radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.06), transparent 40%),
+                  linear-gradient(to bottom, rgba(0,0,0,0.78), rgba(0,0,0,0.68));
+      z-index: -2;
+    }
+
+    /* leichter “Filmgrain”-Look (sehr dezent) */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.12'/%3E%3C/svg%3E");
+      opacity: .18;
+      mix-blend-mode: overlay;
+      pointer-events: none;
+      z-index: -1;
+    }
+
     header {
-      padding: 28px 16px 14px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
+      padding: 28px 16px 18px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
     }
+
     .wrap { max-width: var(--max); margin: 0 auto; }
-    h1 { margin: 0 0 8px; font-size: 26px; }
-    p { margin: 0; color: rgba(255,255,255,.75); line-height: 1.4; }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 28px;
+      letter-spacing: .2px;
+      text-shadow: 0 6px 26px rgba(0,0,0,.55);
+    }
+
+    p {
+      margin: 0;
+      color: rgba(255,255,255,.82);
+      line-height: 1.55;
+    }
+
+    .hero {
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.52);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 16px 16px 14px;
+      box-shadow: 0 18px 55px rgba(0,0,0,.35);
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 12px;
+      color: rgba(255,255,255,.92);
+      background: rgba(255, 0, 100, .14);
+      border: 1px solid rgba(255,255,255,.18);
+      padding: 6px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .letter p { margin: 0 0 10px; }
+    .signature { margin-top: 10px; color: rgba(255,255,255,.94); }
+    .sig { color: rgba(255,255,255,.72); font-size: 14px; }
 
     main { padding: 16px; }
     .feed { display: grid; gap: var(--gap); }
+
     .item {
       border-radius: 18px;
       overflow: hidden;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.50);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      box-shadow: 0 16px 50px rgba(0,0,0,.30);
+      transform: translateY(0);
+      transition: transform .2s ease, border-color .2s ease, background .2s ease;
     }
+
+    .item:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,.22);
+      background: rgba(0,0,0,.56);
+    }
+
     .item img {
       width: 100%;
       height: auto;
       display: block;
       cursor: pointer;
     }
+
     .cap {
-      padding: 10px 12px 12px;
-      color: rgba(255,255,255,.80);
+      padding: 12px 12px 14px;
+      color: rgba(255,255,255,.84);
       font-size: 14px;
+      line-height: 1.48;
+    }
+
+    .cap strong {
+      display: block;
+      margin-bottom: 6px;
+      color: rgba(255,255,255,.96);
+      font-size: 15px;
+      letter-spacing: .15px;
     }
 
     /* Lightbox */
@@ -47,40 +136,81 @@
       display: none;
       align-items: center;
       justify-content: center;
-      background: rgba(0,0,0,.8);
+      background: rgba(0,0,0,.84);
       padding: 16px;
       z-index: 999;
     }
     .lb.open { display: flex; }
+
     .lb img {
       width: min(980px, 100%);
       max-height: 90vh;
       object-fit: contain;
       border-radius: 18px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.35);
+      box-shadow: 0 22px 80px rgba(0,0,0,.55);
     }
+
     .hint {
       position: fixed;
       bottom: 14px; left: 50%;
       transform: translateX(-50%);
       font-size: 12px;
-      color: rgba(255,255,255,.7);
-      background: rgba(0,0,0,.35);
-      border: 1px solid rgba(255,255,255,.15);
+      color: rgba(255,255,255,.75);
+      background: rgba(0,0,0,.40);
+      border: 1px solid rgba(255,255,255,.16);
       padding: 8px 10px;
       border-radius: 999px;
       backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
     }
   </style>
 </head>
+
 <body>
   <header>
     <div class="wrap">
-      <h1>❤️ Für dich</h1>
-      <p>Damit du immer etwas von uns zwei bei dir hast.
-        Unsere schönsten Momente.
-        Einfach runterscrollen. <br>Ich Liebe dich mein Schatz.</p>
+      <h1>❤️ Für dich, mein Schatz</h1>
+
+      <div class="hero">
+        <span class="badge">Valentinstag</span>
+        <div class="letter">
+          <p>Mein Schatz,</p>
+
+          <p>
+            wenn ich an uns denke, dann denke ich nicht nur an einzelne Momente – ich denke an ein Gefühl.
+            Ein Gefühl von Zuhause. Von Wärme. Von Sicherheit. Von Abenteuer.
+          </p>
+
+          <p>
+            Mit dir ist alles schöner.
+            Die Berge sind höher, die Sonnenuntergänge intensiver, das Lachen lauter und selbst schwere Tage werden leichter,
+            weil du an meiner Seite bist.
+          </p>
+
+          <p>
+            Du bist nicht nur meine Freundin.
+            Du bist mein Rückhalt, mein größter Fan, mein Ruhepol, mein Abenteuerpartner und mein Herz.
+          </p>
+
+          <p>
+            Diese Seite ist nur ein kleiner Ausschnitt von dem, was wir schon erlebt haben –
+            aber vor allem ist sie ein Versprechen:
+            Ich möchte noch unendlich viele Erinnerungen mit dir sammeln.
+          </p>
+
+          <p>
+            Danke, dass du meine Hand hältst –
+            auf Gipfeln, im Tal, im Krankenhausbett und überall dazwischen.
+          </p>
+
+          <p class="signature">
+            Ich liebe dich. ❤️<br />
+            <span class="sig">– dein Schatz</span>
+          </p>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -96,12 +226,60 @@
   </div>
 
   <script>
-    // Trage hier eure Bilder ein (Dateien in /img legen)
+    // Bilder in /img ablegen:
+    // Hintergrund: bg.jpg
+    // Momente: 01.jpg ... 10.jpg
     const pics = [
-      { src: "img/01.jpg", cap: "Unser erstes Foto ❤️" },
-      { src: "img/02.jpg", cap: "Dieser Tag war perfekt." },
-      { src: "img/03.jpg", cap: "Mehr davon bitte 😄" },
-      // ...
+      {
+        src: "img/01.jpg",
+        title: "Turracherhöhe",
+        cap: "Hier hat alles begonnen. Zwischen Bergen, frischer Luft und diesem ersten gemeinsamen Foto wusste ich: Mit dir fühlt sich alles richtig an."
+      },
+      {
+        src: "img/02.jpg",
+        title: "Spa-Momente",
+        cap: "Mit dir ist selbst Stille besonders. Zwischen warmem Wasser und ruhigen Momenten habe ich gemerkt, wie gut sich „wir“ anfühlt."
+      },
+      {
+        src: "img/03.jpg",
+        title: "Motocross",
+        cap: "Dass du bei meinem Hobby dabei bist, bedeutet mir mehr, als du denkst. Staub, Motorengeräusche – und mittendrin mein größter Support. Du bist mein schönster Boxenstopp. ❤️"
+      },
+      {
+        src: "img/04.jpg",
+        title: "Erste Skiversuche",
+        cap: "So tapfer, so ehrgeizig und trotzdem immer am Lachen. Ich war so stolz auf dich – nicht nur wegen der Schwünge, sondern weil du einfach alles mit mir ausprobierst."
+      },
+      {
+        src: "img/05.jpg",
+        title: "Rumblödeln",
+        cap: "Mit dir kann ich einfach ich selbst sein. Verrückt, albern, laut – und genau das liebe ich so sehr an uns."
+      },
+      {
+        src: "img/06.jpg",
+        title: "Abendsonne",
+        cap: "Die Sonne ging unter – aber mein Herz ist in diesem Moment aufgegangen. Du bist mein schönster Sonnenuntergang."
+      },
+      {
+        src: "img/07.jpg",
+        title: "Immer an meiner Seite",
+        cap: "In einer Zeit, die nicht leicht war, warst du meine Stärke. Du hast meine Hand gehalten, als ich sie am meisten gebraucht habe. Und genau da wusste ich: Ich will dich für immer an meiner Seite."
+      },
+      {
+        src: "img/08.jpg",
+        title: "Morgensonne",
+        cap: "Früher Start, kalte Luft, warmes Herz. Mit dir fühlt sich selbst ein Sonnenaufgang wie ein neues Kapitel an."
+      },
+      {
+        src: "img/09.jpg",
+        title: "Teamwork",
+        cap: "Dein Ehrgeiz motiviert mich genauso, wie ich dich motivieren darf. Wir pushen uns – im Sport und im Leben. Team fürs Leben."
+      },
+      {
+        src: "img/10.jpg",
+        title: "Neue Tourenski",
+        cap: "Ein neues Kapitel, neue Abenteuer, neue Gipfel. Mit dir möchte ich noch unzählige Spuren im Schnee hinterlassen – und noch mehr in unserem gemeinsamen Leben."
+      }
     ];
 
     const feed = document.getElementById("feed");
@@ -112,14 +290,19 @@
       const div = document.createElement("div");
       div.className = "item";
       div.innerHTML = `
-        <img src="${p.src}" alt="">
-        ${p.cap ? `<div class="cap">${p.cap}</div>` : ""}
+        <img src="${p.src}" alt="${p.title}">
+        <div class="cap">
+          <strong>${p.title}</strong>
+          ${p.cap}
+        </div>
       `;
+
       div.querySelector("img").addEventListener("click", () => {
         lbImg.src = p.src;
         lb.classList.add("open");
         lb.setAttribute("aria-hidden","false");
       });
+
       feed.appendChild(div);
     });
 
@@ -132,6 +315,9 @@
     });
   </script>
 </body>
-
 </html>
+
+
+
+
 
